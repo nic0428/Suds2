@@ -1,10 +1,10 @@
 <h1>SUDS2.js<h2>
 
-SUDS2 is a fork of (Kevin Whinnery's)[https://twitter.com/kevinwhinnery] (JavaScript SOAP Client Library)[https://github.com/kwhinnery/Suds].  
+SUDS2 is a fork of [Kevin Whinnery's](https://twitter.com/kevinwhinnery) [JavaScript SOAP Client Library](https://github.com/kwhinnery/Suds).  
 
-## Suds2: A SOAP Client Library for Titanium Mobile
+<h2>Suds2: A SOAP Client Library for Titanium Mobile</h2>
 
-## Usage
+<h2>Usage</h2>
 
 <h3>Require suds into your project</h3>
 <pre><code>
@@ -72,4 +72,4 @@ Invoke a SOAP action on the web service defined by this Suds instance.
 	
 ## Examples
 
-For a working example see the included app.js
+For a working example see the included [app.js](http://github.com/benbahrenburg/Suds2/blob/master/app.js).
