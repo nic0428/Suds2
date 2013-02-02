@@ -1,13 +1,13 @@
 /*jslint maxerr:1000 */
 /**
-* suds2 is a fork of suds by Kevin Whinnery
-* update are available for suds2 at: http://github.com/benbahrenburg/Suds2
-*
+* *
+* Sud2 is forked from Kevin Whinnery's suds.js project
+* Updates to Suds2 can be found at https://github.com/benbahrenburg/Suds2
+* 
 * Suds: A Lightweight JavaScript SOAP Client
 * Copyright: 2009 Kevin Whinnery (http://www.kevinwhinnery.com)
 * License: http://www.apache.org/licenses/LICENSE-2.0.html
 * Source: http://github.com/kwhinnery/Suds
-*
 */
 var SudsClient = function(_options) {
   
@@ -80,6 +80,10 @@ var SudsClient = function(_options) {
     targetNamespace: 'http://localhost',
     envelopeBegin: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:ns0="PLACEHOLDER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body>',
     envelopeEnd: '</soap:Body></soap:Envelope>',
+    headerBegin: '<soap:Header>',
+    headerNode:'head',
+    headerEnd: '</soap:Header>',
+    timeout : 5000,
     includeNS : true,
     addTargetSchema : false,
     ns:'ns0'
@@ -106,9 +110,10 @@ var SudsClient = function(_options) {
   };
   
   // Invoke a web service
-  this.invoke = function(_soapAction,_body,_callback) {    
+  this.invoke = function(_soapAction,_body,_callback,_header) {    
     //Build request body 
     var body = _body;
+    var header = _header;
     
     //Allow straight string input for XML body - if not, build from object
 
@@ -135,9 +140,25 @@ var SudsClient = function(_options) {
     xhr.onload = function() {
       _callback.call(this, xmlDomFromString(this.responseText));
     };
+    xhr.setTimeout(config.timeout);
+    var sendXML = '';
+    if(!header) {
+        sendXML = config.envelopeBegin+config.bodyBegin+body+config.envelopeEnd;
+    } else {
+        //Allow straight string input for XML body - if not, build from object
+        if (typeof header !== 'string') {
+          header = '<'+_soapAction+' xmlns="'+config.targetNamespace+'">';
+          header += convertToXml(_header);
+          header += '</'+_soapAction+'>';
+        }
+        sendXML = config.envelopeBegin+config.headerBegin+header+config.headerEnd+config.bodyBegin+body+config.envelopeEnd;
+    }    
     xhr.open('POST',config.endpoint);
 		xhr.setRequestHeader('Content-Type', 'text/xml');
 		xhr.setRequestHeader('SOAPAction', soapAction);
+	    if (config.authorization !== undefined) {
+		  xhr.setRequestHeader('Authorization', 'Basic ' + config.authorization);
+		}		
 		xhr.send(config.envelopeBegin+body+config.envelopeEnd);
   };
 };
