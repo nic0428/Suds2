@@ -1,33 +1,43 @@
-# Unsupported
+<h1>SUDS2.js<h2>
 
-I am no longer supporting this library - you can check one of the forks for a more up-to-date version.
+SUDS2 is a fork of (Kevin Whinnery's)[https://twitter.com/kevinwhinnery] (JavaScript SOAP Client Library)[https://github.com/kwhinnery/Suds].  
 
-## Suds: A JavaScript SOAP Client Library
-
-> _XML is like violence - if it doesn't solve your problem, you're probably not using enough of it._
-
-Suds is a lightweight SOAP client library for JavaScript.  Suds has been tested on the following platforms:
-
-* Titanium Desktop (0.7.0)
-* Titanium Mobile (0.7.1)
-
-For more information on creating native desktop and mobile apps with HTML, JavaScript, and CSS, 
-[check out the Appcelerator home page](http://www.appcelerator.com).  Suds should also run in the web browser
-against SOAP web services, with the usual cross-domain restrictions.  Suds has yet to be tested in the browser,
-however, so your mileage may vary.  __NOTE:__ While jQuery 1.3 is used in the example applications, Suds is not
-dependent upon it and can be used independently.
+## Suds2: A SOAP Client Library for Titanium Mobile
 
 ## Usage
 
-	var suds = new SudsClient({ 
-	  endpoint: "http://webservice.webserviceshare.com/currencyconverter/rates.asmx",
-	  targetNamespace: "http://websevriceshare.com/" 
-	});
-	
-	suds.invoke("GetSupportedCurrencies", {}, function(xmlDoc) {
-	  //Parse XML response (SOAP Envelope)
-	});
-		
+<h3>Require suds into your project</h3>
+<pre><code>
+//Create our application namespace
+var my = {
+	suds : require('suds2'),
+	isAndroid : (Ti.Platform.osname === 'android'),
+	config : {
+		endpoint:"http://www.webservicex.net/CurrencyConvertor.asmx",
+	    targetNamespace: 'http://www.webserviceX.NET/'		    	    	
+	}	
+};	
+</code></pre>
+
+
+<h3>Calling a service</h3>
+<pre><code>
+	var sudsClient = new my.suds(my.config);
+    sudsClient.invoke('ConversionRate', 
+    	{
+		    FromCurrency: 'EUR',
+		    ToCurrency: 'USD'
+		}, 
+		function(xmlDoc) {
+	    	var results = xmlDoc.documentElement.getElementsByTagName('ConversionRateResult');
+	        if (results && results.length>0) {
+	            var result = results.item(0);
+	            Ti.API.info('1 Euro buys you ' + results.item(0).text + ' U.S. Dollars.');
+	        } else {
+	            Ti.API.info('Oops, could not determine result of SOAP call.');
+	        }
+		});
+</code></pre>		
 ## API
 
 The following is the current API documentation for Suds, which consists of a constructor for the client and an `invoke`
@@ -43,6 +53,10 @@ Constructor for a Suds SOAP web service client.
 	* envelopeBegin (optional) - a string containing the XML preceding the contents of the SOAP request body
 	* envelopeEnd (optional) - a string containing the XML following the contents of the SOAP request body
 	* authorization (optional) - a string used to specify basic HTTP authorization in the request header
+	* includeNS (optional) - a boolean (ns0 by default) allows to exclude namespace if needed
+	* ns (optional) -  a string, ns0 by default, allows you to update your namespace
+	* addTargetSchema (optional) - a boolean, alse by default, allows to update target schema 
+
 	
 ### `sudsClient.invoke(soapAction, body, callback(xmlDoc))`
 
@@ -58,6 +72,4 @@ Invoke a SOAP action on the web service defined by this Suds instance.
 	
 ## Examples
 
-Example applications using Suds for Titanium Mobile and Desktop are located in this project as well.
-Feel free to pull them down and import into Titanium Developer to see these projects in action.  They
-should work out of the box using a publicly available SOAP web service.
+For a working example see the included app.js
