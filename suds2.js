@@ -59,7 +59,7 @@ var SudsClient = function(_options) {
           xml += '<'+key+'>';
         }
         if (isArray(_obj[key]) || (typeof _obj[key] == 'object' && _obj[key] != null)) {
-          xml += convertToXml(_obj[key]);
+          xml += convertToXml(_obj[key], namespacePrefix);
         }
         else {
           xml += _obj[key];
